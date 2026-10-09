@@ -1,0 +1,25 @@
+# Two single-node clusters for a side-by-side comparison.
+#   "before": newest 26.2 patch, still has the bug (override with OLD_VERSION)
+#   "after":  first release line with the fix (override with NEW_VERSION)
+name: udf-plan-cache-demo
+services:
+  crdb-before:
+    image: cockroachdb/cockroach:${OLD_VERSION:-v26.2.7}
+    command: start-single-node --insecure --cache=512MiB --max-sql-memory=512MiB
+    ports:
+      - "26262:26257"
+      - "8262:8080"
+    healthcheck:
+      test: ["CMD", "/cockroach/cockroach", "sql", "--insecure", "-e", "SELECT 1"]
+      interval: 3s
+      retries: 40
+  crdb-after:
+    image: cockroachdb/cockroach:${NEW_VERSION:-v26.3.2}
+    command: start-single-node --insecure --cache=512MiB --max-sql-memory=512MiB
+    ports:
+      - "26263:26257"
+      - "8263:8080"
+    healthcheck:
+      test: ["CMD", "/cockroach/cockroach", "sql", "--insecure", "-e", "SELECT 1"]
+      interval: 3s
+      retries: 40
